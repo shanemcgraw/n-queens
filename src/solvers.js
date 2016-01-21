@@ -35,11 +35,11 @@ setEliminated = function(i, j, conflictObj, onOrOff) {
 };
 
 // QUADRATIC TIME COMPLEXITY
-var differentRecurse = function(numPieces, board, row, conflictFunc, conflictObj, solutionsObject) {
+var differentRecurse = function(board, row, conflictFunc, conflictObj, solutionsObject) {
   
   var solution;
   //CONSTANT
-  if(numPieces >= board.get("n")){
+  if(row >= board.get("n")){
     if (solutionsObject !== undefined) {
       solutionsObject.count++;
     } else {
@@ -47,14 +47,14 @@ var differentRecurse = function(numPieces, board, row, conflictFunc, conflictObj
     }
   } else {
     //if no, create new possibility with updated board and updated column and row info
-
-    for(var i=row; i<board.get("n"); i++){
+    var i = row;
+    // for(var i=row; i<board.get("n"); i++){
       for(var j=0; j<board.get("n"); j++){
         // var matrix = deepCopy(board.rows());
         board.togglePiece(i,j);
         if (!isEliminated(i,j, conflictObj)) {
           setEliminated(i,j,conflictObj,true);
-          solution = differentRecurse(numPieces + 1, board, i+1, conflictFunc, conflictObj, solutionsObject);
+          solution = differentRecurse(board, i+1, conflictFunc, conflictObj, solutionsObject);
           if (solutionsObject === undefined && solution) { // we are not counting, we just want one solution
             return solution;
           }
@@ -63,7 +63,7 @@ var differentRecurse = function(numPieces, board, row, conflictFunc, conflictObj
         board.togglePiece(i,j);
       }
     }
-  }
+  // }
 };
 
 
@@ -78,7 +78,7 @@ window.findNRooksSolution = function(n) {
   var conflictObj = { cols:{}};
 
   // solution = countRecurse(numRooks, board, -1, 0, board.hasAnyRooksConflicts);
-  solution = differentRecurse(numRooks, board, 0, board.hasAnyRooksConflicts, conflictObj);
+  solution = differentRecurse(board, 0, board.hasAnyRooksConflicts, conflictObj);
 
   if(solution){
     console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
@@ -100,7 +100,7 @@ window.countNRooksSolutions = function(n) {
   var numRooks = 0;
   var board = new Board({ 'n':n });
   // countRecurse(numRooks, board, -1, 0, board.hasAnyRooksConflicts, solutions );
-  differentRecurse(numRooks, board, 0, board.hasAnyRooksConflicts, conflictObj, solutions );
+  differentRecurse(board, 0, board.hasAnyRooksConflicts, conflictObj, solutions );
 
   solutionCount = solutions.count;
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
@@ -119,7 +119,7 @@ window.findNQueensSolution = function(n) {
 
   // solution = countRecurse(numQueens, board, -1, 0, board.hasAnyQueensConflicts);
 
-  solution = differentRecurse(numQueens, board, 0, board.hasAnyQueensConflicts, conflictObj);
+  solution = differentRecurse(board, 0, board.hasAnyQueensConflicts, conflictObj);
 
   if(solution){
     console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
@@ -144,9 +144,40 @@ window.countNQueensSolutions = function(n) {
   var numQueens = 0;
   var board = new Board({ 'n':n });
   // countRecurse(numQueens, board, -1, 0, board.hasAnyQueensConflicts, solutions);
-  differentRecurse(numQueens, board, 0, board.hasAnyQueensConflicts, conflictObj, solutions);
+  differentRecurse(board, 0, board.hasAnyQueensConflicts, conflictObj, solutions);
 
   solutionCount = solutions.count;
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
+
+
+// window.fastQueens = function( n, cols, maj, min ) {
+// if(numPieces >= board.get("n")){
+//     if (solutionsObject !== undefined) {
+//       solutionsObject.count++;
+//     } else {
+//       return board.rows();
+//     }
+//   } else {
+//     //if no, create new possibility with updated board and updated column and row info
+
+//     for(var i=row; i<board.get("n"); i++){
+//       for(var j=0; j<board.get("n"); j++){
+//         // var matrix = deepCopy(board.rows());
+//         board.togglePiece(i,j);
+//         if (!isEliminated(i,j, conflictObj)) {
+//           setEliminated(i,j,conflictObj,true);
+//           solution = differentRecurse(board, i+1, conflictFunc, conflictObj, solutionsObject);
+//           if (solutionsObject === undefined && solution) { // we are not counting, we just want one solution
+//             return solution;
+//           }
+//           setEliminated(i,j,conflictObj,false);
+//         }
+//         board.togglePiece(i,j);
+//       }
+//     }
+//   }
+// };
+
+
