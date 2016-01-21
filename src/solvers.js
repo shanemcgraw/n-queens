@@ -13,7 +13,7 @@
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
-
+// QUADRATIC TIME COMPLEXITY
 var deepCopy = function(array){
   var copied = [];
 
@@ -27,7 +27,7 @@ var deepCopy = function(array){
   return copied;
 };
 
-
+// EXPONENTIAL TIME COMPLEXITY
 var countRecurse = function(numPieces, board, row, column, conflictFunc, solutionsObject) {
   var solution;
   if (row > -1) {
@@ -57,7 +57,7 @@ var countRecurse = function(numPieces, board, row, column, conflictFunc, solutio
   }
 };
 
-
+// EXPONENTIAL TIME COMPLEXITY
 window.findNRooksSolution = function(n) {
   var solution;
   var numRooks = 0;
@@ -72,7 +72,7 @@ window.findNRooksSolution = function(n) {
   return solution;
 };
 
- 
+// EXPONENTIAL TIME COMPLEXITY
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
 
@@ -90,6 +90,7 @@ window.countNRooksSolutions = function(n) {
   return solutionCount;
 };
 
+// EXPONENTIAL TIME COMPLEXITY
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
   var solution;
@@ -107,7 +108,7 @@ window.findNQueensSolution = function(n) {
 
 
 
-
+// EXPONENTIAL TIME COMPLEXITY
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
   var solutions = {};

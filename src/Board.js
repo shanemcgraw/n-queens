@@ -78,6 +78,8 @@
     // --------------------------------------------------------------
     //
     // test if a specific row on this board contains a conflict
+    
+    // LINEAR TIME COMPLEXITY
     hasRowConflictAt: function(rowIndex) {
       var numPieces = _.reduce(this.rows()[rowIndex], function(x, y) {
         return x+y;
@@ -86,6 +88,8 @@
     },
 
     // test if any rows on this board contain conflicts
+
+    // QUADRATIC TIME COMPLEXITY
     hasAnyRowConflicts: function() {
       for (var i = 0; i < this.get('n'); i++) {
         if (this.hasRowConflictAt(i)) {
@@ -101,6 +105,9 @@
     // --------------------------------------------------------------
     //
     // test if a specific column on this board contains a conflict
+
+
+    // LINEAR TIME COMPLEXITY
     hasColConflictAt: function(colIndex) {
       var numPieces = _.reduce(this.rows(), function(total, currentRow) {
         return total + currentRow[colIndex];
@@ -109,6 +116,8 @@
     },
 
     // test if any columns on this board contain conflicts
+
+    // QUADRATIC TIME COMPLEXITY
     hasAnyColConflicts: function() {
       for (var i = 0; i < this.get('n'); i++) {
         if (this.hasColConflictAt(i)) {
@@ -124,6 +133,8 @@
     // --------------------------------------------------------------
     //
     // test if a specific major diagonal on this board contains a conflict
+    
+    // LINEAR TIME COMPLEXITY
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
       var numPieces = 0;
       var column = majorDiagonalColumnIndexAtFirstRow;
@@ -140,6 +151,7 @@
     },
 
     // test if any major diagonals on this board contain conflicts
+    // QUADRATIC TIME COMPLEXITY
     hasAnyMajorDiagonalConflicts: function() {
       for (var i = 0; i < this.get("n"); i++) {
         if(this.hasMajorDiagonalConflictAt(this._getFirstRowColumnIndexForMajorDiagonalOn(i, 0))){
@@ -160,6 +172,7 @@
     // --------------------------------------------------------------
     //
     // test if a specific minor diagonal on this board contains a conflict
+    // LINEAR TIME COMPLEXITY
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
       var numPieces = 0;
       var column = minorDiagonalColumnIndexAtFirstRow;
@@ -176,6 +189,7 @@
     },
 
     // test if any minor diagonals on this board contain conflicts
+    // QUADRATIC TIME COMPLEXITY
     hasAnyMinorDiagonalConflicts: function() {
       for (var i = this.get("n"); i >= 0 ; i--) {
         if(this.hasMinorDiagonalConflictAt(this._getFirstRowColumnIndexForMinorDiagonalOn(i, 0))){
