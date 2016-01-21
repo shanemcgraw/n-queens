@@ -13,20 +13,7 @@
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
-// QUADRATIC TIME COMPLEXITY
-var deepCopy = function(array){
-  var copied = [];
-
-  array.forEach(function(row, i){
-    copied.push([]);
-    row.forEach(function(element) {
-      copied[i].push(element);
-    });
-  });
-
-  return copied;
-};
-
+// CONSTANT TIME COMPLEXITY
 isEliminated = function(i, j, conflictObj) {
   var columnConflict = conflictObj.cols[j];
   if (conflictObj.majorDiag) {
@@ -38,6 +25,7 @@ isEliminated = function(i, j, conflictObj) {
   }
 };
 
+// CONSTANT TIME COMPLEXITY
 setEliminated = function(i, j, conflictObj, onOrOff) {
   conflictObj.cols[j] = onOrOff;
   if (conflictObj.majorDiag) {
@@ -46,9 +34,11 @@ setEliminated = function(i, j, conflictObj, onOrOff) {
   }
 };
 
-// EXPONENTIAL TIME COMPLEXITY
+// QUADRATIC TIME COMPLEXITY
 var differentRecurse = function(numPieces, board, row, conflictFunc, conflictObj, solutionsObject) {
+  
   var solution;
+  //CONSTANT
   if(numPieces >= board.get("n")){
     if (solutionsObject !== undefined) {
       solutionsObject.count++;
@@ -57,11 +47,12 @@ var differentRecurse = function(numPieces, board, row, conflictFunc, conflictObj
     }
   } else {
     //if no, create new possibility with updated board and updated column and row info
+
     for(var i=row; i<board.get("n"); i++){
       for(var j=0; j<board.get("n"); j++){
         // var matrix = deepCopy(board.rows());
         board.togglePiece(i,j);
-        if (!isEliminated(i,j, conflictObj) /* && !conflictFunc.apply(board) */) {
+        if (!isEliminated(i,j, conflictObj)) {
           setEliminated(i,j,conflictObj,true);
           solution = differentRecurse(numPieces + 1, board, i+1, conflictFunc, conflictObj, solutionsObject);
           if (solutionsObject === undefined && solution) { // we are not counting, we just want one solution
@@ -77,7 +68,7 @@ var differentRecurse = function(numPieces, board, row, conflictFunc, conflictObj
 
 
 
-// EXPONENTIAL TIME COMPLEXITY
+// QUADRATIC TIME COMPLEXITY
 window.findNRooksSolution = function(n) {
   var solution;
   var numRooks = 0;
@@ -96,7 +87,7 @@ window.findNRooksSolution = function(n) {
   return solution;
 };
 
-// EXPONENTIAL TIME COMPLEXITY
+// QUADRATIC TIME COMPLEXITY
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
 
@@ -116,7 +107,7 @@ window.countNRooksSolutions = function(n) {
   return solutionCount;
 };
 
-// EXPONENTIAL TIME COMPLEXITY
+// QUADRATIC TIME COMPLEXITY
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
   var solution;
@@ -139,7 +130,7 @@ window.findNQueensSolution = function(n) {
 
 
 
-// EXPONENTIAL TIME COMPLEXITY
+// QUADRATIC TIME COMPLEXITY
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
   var solutions = {};
