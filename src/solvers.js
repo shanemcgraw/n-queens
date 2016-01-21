@@ -57,13 +57,44 @@ var countRecurse = function(numPieces, board, row, column, conflictFunc, solutio
   }
 };
 
+
+// EXPONENTIAL TIME COMPLEXITY
+var differentRecurse = function(numPieces, board, row, column, conflictFunc, solutionsObject) {
+  var solution;
+  if(numPieces >= board.get("n")){
+    if (solutionsObject !== undefined) {
+      solutionsObject.count++;
+    } else {
+      return board.rows();
+    }
+  } else {
+    //if no, create new possibility with updated board and updated column and row info
+    for(var i=row; i<board.get("n"); i++){
+      for(var j=0; j<board.get("n"); j++){
+        // var matrix = deepCopy(board.rows());
+        board.togglePiece(i,j);
+        if (!conflictFunc.apply(board) ) {
+          solution = differentRecurse(numPieces + 1, board, i+1, j, conflictFunc, solutionsObject);
+          if (solutionsObject === undefined && solution) { // we are not counting, we just want one solution
+            return solution;
+          }
+        }
+        board.togglePiece(i,j);
+      }
+    }
+  }
+};
+
+
+
 // EXPONENTIAL TIME COMPLEXITY
 window.findNRooksSolution = function(n) {
   var solution;
   var numRooks = 0;
   var board = new Board({ 'n':n });
 
-  solution = countRecurse(numRooks, board, -1, 0, board.hasAnyRooksConflicts);
+  // solution = countRecurse(numRooks, board, -1, 0, board.hasAnyRooksConflicts);
+  solution = differentRecurse(numRooks, board, 0, 0, board.hasAnyRooksConflicts);
 
   if(solution){
     console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
@@ -83,7 +114,8 @@ window.countNRooksSolutions = function(n) {
 
   var numRooks = 0;
   var board = new Board({ 'n':n });
-  countRecurse(numRooks, board, -1, 0, board.hasAnyRooksConflicts, solutions );
+  // countRecurse(numRooks, board, -1, 0, board.hasAnyRooksConflicts, solutions );
+  countRecurse(numRooks, board, 0, 0, board.hasAnyRooksConflicts, solutions );
 
   solutionCount = solutions.count;
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
@@ -97,7 +129,9 @@ window.findNQueensSolution = function(n) {
   var numQueens = 0;
   var board = new Board({ 'n':n });
 
-  solution = countRecurse(numQueens, board, -1, 0, board.hasAnyQueensConflicts);
+  // solution = countRecurse(numQueens, board, -1, 0, board.hasAnyQueensConflicts);
+
+  solution = differentRecurse(numQueens, board, 0, 0, board.hasAnyQueensConflicts);
 
   if(solution){
     console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
@@ -118,7 +152,8 @@ window.countNQueensSolutions = function(n) {
 
   var numQueens = 0;
   var board = new Board({ 'n':n });
-  countRecurse(numQueens, board, -1, 0, board.hasAnyQueensConflicts, solutions);
+  // countRecurse(numQueens, board, -1, 0, board.hasAnyQueensConflicts, solutions);
+  differentRecurse(numQueens, board, 0, 0, board.hasAnyQueensConflicts, solutions);
 
   solutionCount = solutions.count;
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
