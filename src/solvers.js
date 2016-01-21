@@ -30,15 +30,15 @@ var deepCopy = function(array){
 
 var newPossibility = function(numRooks, board, row, column) {
   var solution;
+  if (row > -1) {
+    board.togglePiece(row, column);
+    
+    if (board.hasAnyRooksConflicts()) {
+      return;
+    }
 
-  board.togglePiece(row, column);
-  
-  if (board.hasAnyRooksConflicts()) {
-    return;
+    numRooks++;
   }
-
-  numRooks++;
-
   if(numRooks === board.get("n")){
     return board.rows();
   }else{
@@ -46,8 +46,6 @@ var newPossibility = function(numRooks, board, row, column) {
     //if no, create new possibility with updated board and updated column and row info
     for(var i=row+1; i<board.get("n"); i++){
       for(var j=0; j<board.get("n"); j++){
-        // debugger;
-        // console.log(board);
         var matrix = deepCopy(board.rows());
         solution = newPossibility(numRooks, new Board(matrix), i, j);
         if(solution){
@@ -62,16 +60,16 @@ window.findNRooksSolution = function(n) {
   var solution;
   var numRooks = 0;
   var board = new Board({ 'n':n });
-  for (var i = 0; i < n; i++) {
-    for (var j = 0; j < n; j++) {
-      var matrix = deepCopy(board.rows());
-      solution = newPossibility(numRooks, new Board(matrix), i, j);
+  // for (var i = 0; i < n; i++) {
+  //   for (var j = 0; j < n; j++) {
+  //     var matrix = deepCopy(board.rows());
+      solution = newPossibility(numRooks, board, -1, 0);
       if(solution){
         console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
         return solution;
       }
-    } 
-  } 
+  //   } 
+  // } 
 
   return solution;
 };
