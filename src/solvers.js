@@ -157,10 +157,41 @@ window.findNQueensSolution = function(n) {
   return (new Board({'n':n})).rows();
 };
 
+
+var queenCountRecurse = function(numQueens, board, row, column, solutionsObject) {
+  var solution;
+  if (row > -1) {
+    board.togglePiece(row, column);
+    if (board.hasAnyQueensConflicts()) {
+      return;
+    }
+    numQueens++;
+  }
+  if(numQueens === board.get("n")){
+    solutionsObject.count++;
+  }else{
+    //if no, create new possibility with updated board and updated column and row info
+    for(var i=row+1; i<board.get("n"); i++){
+      for(var j=0; j<board.get("n"); j++){
+        var matrix = deepCopy(board.rows());
+        queenCountRecurse(numQueens, new Board(matrix), i, j, solutionsObject);
+      }
+    }
+  }
+};
+
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutions = {};
+  solutions.count = 0;
 
+  var solutionCount; 
+
+  var numQueens = 0;
+  var board = new Board({ 'n':n });
+  queenCountRecurse(numQueens, board, -1, 0, solutions);
+
+  solutionCount = solutions.count;
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
