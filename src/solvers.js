@@ -56,26 +56,51 @@ var rookRecurse = function(numRooks, board, row, column) {
   }
 };
 
+
+var queenRecurse = function(numQueens, board, row, column) {
+  var solution;
+  if (row > -1) {
+    board.togglePiece(row, column);
+    
+    if (board.hasAnyQueensConflicts()) {
+      return;
+    }
+
+    numQueens++;
+  }
+  if(numQueens === board.get("n")){
+    return board.rows();
+  }else{
+
+    //if no, create new possibility with updated board and updated column and row info
+    for(var i=row+1; i<board.get("n"); i++){
+      for(var j=0; j<board.get("n"); j++){
+        var matrix = deepCopy(board.rows());
+        solution = queenRecurse(numQueens, new Board(matrix), i, j);
+        if(solution){
+          return solution;
+        }
+      }
+    }
+  }
+};
+
+
 window.findNRooksSolution = function(n) {
   var solution;
   var numRooks = 0;
   var board = new Board({ 'n':n });
-  // for (var i = 0; i < n; i++) {
-  //   for (var j = 0; j < n; j++) {
-  //     var matrix = deepCopy(board.rows());
-      solution = rookRecurse(numRooks, board, -1, 0);
-      if(solution){
-        console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
-        return solution;
-      }
-  //   } 
-  // } 
 
+  solution = rookRecurse(numRooks, board, -1, 0);
+  if(solution){
+    console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
+    return solution;
+  }
   return solution;
 };
 
 
-var rookCountRecurse = function(numRooks, board, row, column, allSolutions) {
+var rookCountRecurse = function(numRooks, board, row, column, solutionsObject) {
   var solution;
   if (row > -1) {
     board.togglePiece(row, column);
@@ -87,17 +112,14 @@ var rookCountRecurse = function(numRooks, board, row, column, allSolutions) {
     numRooks++;
   }
   if(numRooks === board.get("n")){
-    allSolutions.push( board.rows() );
+    solutionsObject.count++;
   }else{
 
     //if no, create new possibility with updated board and updated column and row info
     for(var i=row+1; i<board.get("n"); i++){
       for(var j=0; j<board.get("n"); j++){
         var matrix = deepCopy(board.rows());
-        rookCountRecurse(numRooks, new Board(matrix), i, j, allSolutions);
-        // if(solution){
-
-        // }
+        rookCountRecurse(numRooks, new Board(matrix), i, j, solutionsObject);
       }
     }
   }
@@ -105,24 +127,34 @@ var rookCountRecurse = function(numRooks, board, row, column, allSolutions) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var allSolutions = [];
+
+  var solutions = {};
+  solutions.count = 0;
+
   var solutionCount; 
 
   var numRooks = 0;
   var board = new Board({ 'n':n });
-  rookCountRecurse(numRooks, board, -1, 0, allSolutions);
+  rookCountRecurse(numRooks, board, -1, 0, solutions);
 
-  solutionCount = allSolutions.length;
+  solutionCount = solutions.count;
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
+  var solution;
+  var numQueens = 0;
+  var board = new Board({ 'n':n });
 
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  return solution;
+  solution = queenRecurse(numQueens, board, -1, 0);
+
+  if(solution){
+    console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+    return solution;
+  }
+  return (new Board({'n':n})).rows();
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
