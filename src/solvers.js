@@ -100,31 +100,6 @@ window.findNRooksSolution = function(n) {
 };
 
 
-var rookCountRecurse = function(numRooks, board, row, column, solutionsObject) {
-  var solution;
-  if (row > -1) {
-    board.togglePiece(row, column);
-    
-    if (board.hasAnyRooksConflicts()) {
-      return;
-    }
-
-    numRooks++;
-  }
-  if(numRooks === board.get("n")){
-    solutionsObject.count++;
-  }else{
-
-    //if no, create new possibility with updated board and updated column and row info
-    for(var i=row+1; i<board.get("n"); i++){
-      for(var j=0; j<board.get("n"); j++){
-        var matrix = deepCopy(board.rows());
-        rookCountRecurse(numRooks, new Board(matrix), i, j, solutionsObject);
-      }
-    }
-  }
-};
-
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
 
@@ -135,7 +110,7 @@ window.countNRooksSolutions = function(n) {
 
   var numRooks = 0;
   var board = new Board({ 'n':n });
-  rookCountRecurse(numRooks, board, -1, 0, solutions);
+  countRecurse(numRooks, board, -1, 0, solutions, board.hasAnyRooksConflicts);
 
   solutionCount = solutions.count;
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
@@ -158,11 +133,11 @@ window.findNQueensSolution = function(n) {
 };
 
 
-var queenCountRecurse = function(numQueens, board, row, column, solutionsObject) {
+var countRecurse = function(numQueens, board, row, column, solutionsObject, conflictFunc) {
   var solution;
   if (row > -1) {
     board.togglePiece(row, column);
-    if (board.hasAnyQueensConflicts()) {
+    if (conflictFunc.apply(board) ) {
       return;
     }
     numQueens++;
@@ -174,7 +149,7 @@ var queenCountRecurse = function(numQueens, board, row, column, solutionsObject)
     for(var i=row+1; i<board.get("n"); i++){
       for(var j=0; j<board.get("n"); j++){
         var matrix = deepCopy(board.rows());
-        queenCountRecurse(numQueens, new Board(matrix), i, j, solutionsObject);
+        countRecurse(numQueens, new Board(matrix), i, j, solutionsObject, conflictFunc);
       }
     }
   }
@@ -189,7 +164,7 @@ window.countNQueensSolutions = function(n) {
 
   var numQueens = 0;
   var board = new Board({ 'n':n });
-  queenCountRecurse(numQueens, board, -1, 0, solutions);
+  countRecurse(numQueens, board, -1, 0, solutions, board.hasAnyQueensConflicts);
 
   solutionCount = solutions.count;
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
