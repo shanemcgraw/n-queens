@@ -27,39 +27,9 @@ var deepCopy = function(array){
   return copied;
 };
 
-// EXPONENTIAL TIME COMPLEXITY
-var countRecurse = function(numPieces, board, row, column, conflictFunc, solutionsObject) {
-  var solution;
-  if (row > -1) {
-    board.togglePiece(row, column);
-    if (conflictFunc.apply(board) ) {
-      return;
-    }
-    numPieces++;
-  }
-  if(numPieces === board.get("n")){
-    if (solutionsObject !== undefined) {
-      solutionsObject.count++;
-    } else {
-      return board.rows();
-    }
-  }else{
-    //if no, create new possibility with updated board and updated column and row info
-    for(var i=row+1; i<board.get("n"); i++){
-      for(var j=0; j<board.get("n"); j++){
-        var matrix = deepCopy(board.rows());
-        solution = countRecurse(numPieces, new Board(matrix), i, j, conflictFunc, solutionsObject);
-        if (solutionsObject === undefined && solution) { // we are not counting, we just want one solution
-          return solution;
-        }
-      }
-    }
-  }
-};
-
 
 // EXPONENTIAL TIME COMPLEXITY
-var differentRecurse = function(numPieces, board, row, column, conflictFunc, solutionsObject) {
+var differentRecurse = function(numPieces, board, row, conflictFunc, solutionsObject) {
   var solution;
   if(numPieces >= board.get("n")){
     if (solutionsObject !== undefined) {
@@ -74,7 +44,7 @@ var differentRecurse = function(numPieces, board, row, column, conflictFunc, sol
         // var matrix = deepCopy(board.rows());
         board.togglePiece(i,j);
         if (!conflictFunc.apply(board) ) {
-          solution = differentRecurse(numPieces + 1, board, i+1, j, conflictFunc, solutionsObject);
+          solution = differentRecurse(numPieces + 1, board, i+1, conflictFunc, solutionsObject);
           if (solutionsObject === undefined && solution) { // we are not counting, we just want one solution
             return solution;
           }
@@ -94,7 +64,7 @@ window.findNRooksSolution = function(n) {
   var board = new Board({ 'n':n });
 
   // solution = countRecurse(numRooks, board, -1, 0, board.hasAnyRooksConflicts);
-  solution = differentRecurse(numRooks, board, 0, 0, board.hasAnyRooksConflicts);
+  solution = differentRecurse(numRooks, board, 0, board.hasAnyRooksConflicts);
 
   if(solution){
     console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
@@ -131,7 +101,7 @@ window.findNQueensSolution = function(n) {
 
   // solution = countRecurse(numQueens, board, -1, 0, board.hasAnyQueensConflicts);
 
-  solution = differentRecurse(numQueens, board, 0, 0, board.hasAnyQueensConflicts);
+  solution = differentRecurse(numQueens, board, 0, board.hasAnyQueensConflicts);
 
   if(solution){
     console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
@@ -153,7 +123,7 @@ window.countNQueensSolutions = function(n) {
   var numQueens = 0;
   var board = new Board({ 'n':n });
   // countRecurse(numQueens, board, -1, 0, board.hasAnyQueensConflicts, solutions);
-  differentRecurse(numQueens, board, 0, 0, board.hasAnyQueensConflicts, solutions);
+  differentRecurse(numQueens, board, 0, board.hasAnyQueensConflicts, solutions);
 
   solutionCount = solutions.count;
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
