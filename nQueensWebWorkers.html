@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script>
+var w = [];
+
+$(document).ready(function() {
+    if(typeof(window.Worker) !== "undefined") {
+        
+for (var i = 0; i < 8; i++) {
+    w[i] = new Worker("src/nqueens_worker.js");
+    w[i].onmessage = function(e) {
+        console.log(e.data);
+
+        $('body').append('<li>' + e.data + '</li>');
+    };
+    w[i].postMessage(i);
+}
+            
+              // w.onmessage = function(event) {
+            // document.getElementById("result").innerHTML = event.data;
+        // };
+    } else {
+        document.getElementById("body").innerHTML = "Sorry! No Web Worker support.";
+    }
+
+
+});
+</script>
+
+</body>
+</html>
