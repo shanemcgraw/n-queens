@@ -34,7 +34,7 @@ setEliminated = function(i, j, conflictObj, onOrOff) {
   }
 };
 
-// // QUADRATIC TIME COMPLEXITY
+// // EXPONENTIAL TIME COMPLEXITY
 // var differentRecurse = function(board, row, conflictFunc, conflictObj, solutionsObject) {
   
 //   var solution;
@@ -68,7 +68,7 @@ setEliminated = function(i, j, conflictObj, onOrOff) {
 
 
 
-// QUADRATIC TIME COMPLEXITY
+// EXPONENTIAL TIME COMPLEXITY
 window.findNRooksSolution = function(n) {
   var solution;
   var numRooks = 0;
@@ -89,7 +89,7 @@ window.findNRooksSolution = function(n) {
   return solution;
 };
 
-// QUADRATIC TIME COMPLEXITY
+// EXPONENTIAL TIME COMPLEXITY
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
 
@@ -110,7 +110,7 @@ window.countNRooksSolutions = function(n) {
   return solutionCount;
 };
 
-// QUADRATIC TIME COMPLEXITY
+// EXPONENTIAL TIME COMPLEXITY
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
   var solution;
@@ -134,7 +134,7 @@ window.findNQueensSolution = function(n) {
 
 
 
-// QUADRATIC TIME COMPLEXITY
+// EXPONENTIAL TIME COMPLEXITY
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
   var solutions = {};
@@ -150,7 +150,8 @@ window.countNQueensSolutions = function(n) {
   // countRecurse(numQueens, board, -1, 0, board.hasAnyQueensConflicts, solutions);
   // differentRecurse(board, 0, board.hasAnyQueensConflicts, conflictObj, solutions);
   // 
-  solutionCount = fastCount(n, 0, conflictObj);
+  // solutionCount = fastCount(n, 0, conflictObj);
+  solutionCount = bitQueens(n, 0, 0,0,0);
 
 //  solutionCount = solutions.count;
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
@@ -158,7 +159,7 @@ window.countNQueensSolutions = function(n) {
 };
 
 
-window.fastCount = function( n, i, conflictObj) {
+window.fastCount = function(n, i, conflictObj) {
 if(i >= n){
     return 1;
 } else {
@@ -195,5 +196,21 @@ if(i >= n){
       }
     }
   }
+};
+
+
+
+window.bitQueens = function( n, i, cols, majorDiag, minorDiag) {
+  if(i >= n) {
+    return 1;
+  }
+  var count = 0;
+  for(var j=0; j<n; j++){
+    var mask = 1<<j;
+    if (!(mask & cols || mask & majorDiag || mask & minorDiag)) {
+      count += bitQueens(n, i+1, cols|mask, (majorDiag|mask)>>1, (minorDiag|mask)<<1);
+    }
+  }
+  return count;
 };
 
