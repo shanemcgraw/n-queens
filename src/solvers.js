@@ -34,39 +34,6 @@ setEliminated = function(i, j, conflictObj, onOrOff) {
   }
 };
 
-// // EXPONENTIAL TIME COMPLEXITY
-// var differentRecurse = function(board, row, conflictFunc, conflictObj, solutionsObject) {
-  
-//   var solution;
-//   //CONSTANT
-//   if(row >= board.get("n")){
-//     if (solutionsObject !== undefined) {
-//       solutionsObject.count++;
-//     } else {
-//       return board.rows();
-//     }
-//   } else {
-//     //if no, create new possibility with updated board and updated column and row info
-//     var i = row;
-//     // for(var i=row; i<board.get("n"); i++){
-//       for(var j=0; j<board.get("n"); j++){
-//         // var matrix = deepCopy(board.rows());
-//         board.togglePiece(i,j);
-//         if (!isEliminated(i,j, conflictObj)) {
-//           setEliminated(i,j,conflictObj,true);
-//           solution = differentRecurse(board, i+1, conflictFunc, conflictObj, solutionsObject);
-//           if (solutionsObject === undefined && solution) { // we are not counting, we just want one solution
-//             return solution;
-//           }
-//           setEliminated(i,j,conflictObj,false);
-//         }
-//         board.togglePiece(i,j);
-//       }
-//     }
-//   // }
-// };
-
-
 
 // EXPONENTIAL TIME COMPLEXITY
 window.findNRooksSolution = function(n) {
@@ -76,10 +43,6 @@ window.findNRooksSolution = function(n) {
 
 
   var conflictObj = { cols:{}};
-
-  // solution = countRecurse(numRooks, board, -1, 0, board.hasAnyRooksConflicts);
-  // solution = differentRecurse(board, 0, board.hasAnyRooksConflicts, conflictObj);
-
   solution = fastFind(n, 0, conflictObj, board); 
 
   if(solution){
@@ -101,11 +64,8 @@ window.countNRooksSolutions = function(n) {
 
   var numRooks = 0;
   var board = new Board({ 'n':n });
-  // countRecurse(numRooks, board, -1, 0, board.hasAnyRooksConflicts, solutions );
-  // differentRecurse(board, 0, board.hasAnyRooksConflicts, conflictObj, solutions );
 
   solutionCount = fastCount(n, 0, conflictObj);
-//  solutionCount = solutions.count;
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
@@ -119,10 +79,6 @@ window.findNQueensSolution = function(n) {
 
 
   var conflictObj = { cols:{}, majorDiag:{}, minorDiag:{} };
-
-  // solution = countRecurse(numQueens, board, -1, 0, board.hasAnyQueensConflicts);
-
-  // solution = differentRecurse(board, 0, board.hasAnyQueensConflicts, conflictObj);
   solution = fastFind(n, 0, conflictObj, board); 
 
   if(solution){
@@ -147,13 +103,8 @@ window.countNQueensSolutions = function(n) {
 
   var numQueens = 0;
   var board = new Board({ 'n':n });
-  // countRecurse(numQueens, board, -1, 0, board.hasAnyQueensConflicts, solutions);
-  // differentRecurse(board, 0, board.hasAnyQueensConflicts, conflictObj, solutions);
-  // 
-  // solutionCount = fastCount(n, 0, conflictObj);
   solutionCount = bitQueens(n, 0, 0,0,0);
 
-//  solutionCount = solutions.count;
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
@@ -207,7 +158,7 @@ window.bitQueens = function( n, i, cols, majorDiag, minorDiag) {
   var count = 0;
   for(var j=0; j<n; j++){
     var mask = 1<<j;
-    if (!(mask & cols || mask & majorDiag || mask & minorDiag)) {
+    if (!(mask & ( majorDiag | cols | minorDiag))) {
       count += bitQueens(n, i+1, cols|mask, (majorDiag|mask)>>1, (minorDiag|mask)<<1);
     }
   }
