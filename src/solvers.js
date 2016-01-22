@@ -34,37 +34,37 @@ setEliminated = function(i, j, conflictObj, onOrOff) {
   }
 };
 
-// QUADRATIC TIME COMPLEXITY
-var differentRecurse = function(board, row, conflictFunc, conflictObj, solutionsObject) {
+// // QUADRATIC TIME COMPLEXITY
+// var differentRecurse = function(board, row, conflictFunc, conflictObj, solutionsObject) {
   
-  var solution;
-  //CONSTANT
-  if(row >= board.get("n")){
-    if (solutionsObject !== undefined) {
-      solutionsObject.count++;
-    } else {
-      return board.rows();
-    }
-  } else {
-    //if no, create new possibility with updated board and updated column and row info
-    var i = row;
-    // for(var i=row; i<board.get("n"); i++){
-      for(var j=0; j<board.get("n"); j++){
-        // var matrix = deepCopy(board.rows());
-        board.togglePiece(i,j);
-        if (!isEliminated(i,j, conflictObj)) {
-          setEliminated(i,j,conflictObj,true);
-          solution = differentRecurse(board, i+1, conflictFunc, conflictObj, solutionsObject);
-          if (solutionsObject === undefined && solution) { // we are not counting, we just want one solution
-            return solution;
-          }
-          setEliminated(i,j,conflictObj,false);
-        }
-        board.togglePiece(i,j);
-      }
-    }
-  // }
-};
+//   var solution;
+//   //CONSTANT
+//   if(row >= board.get("n")){
+//     if (solutionsObject !== undefined) {
+//       solutionsObject.count++;
+//     } else {
+//       return board.rows();
+//     }
+//   } else {
+//     //if no, create new possibility with updated board and updated column and row info
+//     var i = row;
+//     // for(var i=row; i<board.get("n"); i++){
+//       for(var j=0; j<board.get("n"); j++){
+//         // var matrix = deepCopy(board.rows());
+//         board.togglePiece(i,j);
+//         if (!isEliminated(i,j, conflictObj)) {
+//           setEliminated(i,j,conflictObj,true);
+//           solution = differentRecurse(board, i+1, conflictFunc, conflictObj, solutionsObject);
+//           if (solutionsObject === undefined && solution) { // we are not counting, we just want one solution
+//             return solution;
+//           }
+//           setEliminated(i,j,conflictObj,false);
+//         }
+//         board.togglePiece(i,j);
+//       }
+//     }
+//   // }
+// };
 
 
 
@@ -78,7 +78,9 @@ window.findNRooksSolution = function(n) {
   var conflictObj = { cols:{}};
 
   // solution = countRecurse(numRooks, board, -1, 0, board.hasAnyRooksConflicts);
-  solution = differentRecurse(board, 0, board.hasAnyRooksConflicts, conflictObj);
+  // solution = differentRecurse(board, 0, board.hasAnyRooksConflicts, conflictObj);
+
+  solution = fastFind(n, 0, conflictObj, board); 
 
   if(solution){
     console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
@@ -100,9 +102,10 @@ window.countNRooksSolutions = function(n) {
   var numRooks = 0;
   var board = new Board({ 'n':n });
   // countRecurse(numRooks, board, -1, 0, board.hasAnyRooksConflicts, solutions );
-  differentRecurse(board, 0, board.hasAnyRooksConflicts, conflictObj, solutions );
+  // differentRecurse(board, 0, board.hasAnyRooksConflicts, conflictObj, solutions );
 
-  solutionCount = solutions.count;
+  solutionCount = fastCount(n, 0, conflictObj);
+//  solutionCount = solutions.count;
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
@@ -119,7 +122,8 @@ window.findNQueensSolution = function(n) {
 
   // solution = countRecurse(numQueens, board, -1, 0, board.hasAnyQueensConflicts);
 
-  solution = differentRecurse(board, 0, board.hasAnyQueensConflicts, conflictObj);
+  // solution = differentRecurse(board, 0, board.hasAnyQueensConflicts, conflictObj);
+  solution = fastFind(n, 0, conflictObj, board); 
 
   if(solution){
     console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
@@ -144,40 +148,52 @@ window.countNQueensSolutions = function(n) {
   var numQueens = 0;
   var board = new Board({ 'n':n });
   // countRecurse(numQueens, board, -1, 0, board.hasAnyQueensConflicts, solutions);
-  differentRecurse(board, 0, board.hasAnyQueensConflicts, conflictObj, solutions);
+  // differentRecurse(board, 0, board.hasAnyQueensConflicts, conflictObj, solutions);
+  // 
+  solutionCount = fastCount(n, 0, conflictObj);
 
-  solutionCount = solutions.count;
+//  solutionCount = solutions.count;
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
 
 
-// window.fastQueens = function( n, cols, maj, min ) {
-// if(numPieces >= board.get("n")){
-//     if (solutionsObject !== undefined) {
-//       solutionsObject.count++;
-//     } else {
-//       return board.rows();
-//     }
-//   } else {
-//     //if no, create new possibility with updated board and updated column and row info
+window.fastCount = function( n, i, conflictObj) {
+if(i >= n){
+    return 1;
+} else {
+  var count = 0;
+  for(var j=0; j<n; j++){
+      if (!isEliminated(i,j, conflictObj)) {
+        setEliminated(i,j,conflictObj,true);
+        count += fastCount(n, i+1, conflictObj);
+        setEliminated(i,j,conflictObj,false);
+      }
+    }
+    return count;
+  }
+};
 
-//     for(var i=row; i<board.get("n"); i++){
-//       for(var j=0; j<board.get("n"); j++){
-//         // var matrix = deepCopy(board.rows());
-//         board.togglePiece(i,j);
-//         if (!isEliminated(i,j, conflictObj)) {
-//           setEliminated(i,j,conflictObj,true);
-//           solution = differentRecurse(board, i+1, conflictFunc, conflictObj, solutionsObject);
-//           if (solutionsObject === undefined && solution) { // we are not counting, we just want one solution
-//             return solution;
-//           }
-//           setEliminated(i,j,conflictObj,false);
-//         }
-//         board.togglePiece(i,j);
-//       }
-//     }
-//   }
-// };
 
+window.fastFind = function( n, i, conflictObj, board) {
+if(i >= n){
+    return board.rows();
+} else {
+  var solution;
+  for(var j=0; j<n; j++){
+      if (!isEliminated(i,j, conflictObj)) {
+        setEliminated(i,j,conflictObj,true);
+        board.togglePiece(i,j);
+        
+        solution = fastFind(n, i+1, conflictObj, board);
+        if (solution) {
+          return solution;
+        }
+        
+        board.togglePiece(i,j);
+        setEliminated(i,j,conflictObj,false);
+      }
+    }
+  }
+};
 
